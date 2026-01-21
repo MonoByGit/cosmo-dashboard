@@ -1,65 +1,83 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { EASE } from "@/lib/motion";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-10">
-      <div className="z-10 max-w-5xl w-full items-center justify-center">
-        <h1 className="text-4xl font-semibold mb-4 text-center text-gray-100">
-          🤖 Alfred Dashboard
-        </h1>
-        <p className="text-center text-gray-70 mb-8 text-base">
-          Je persoonlijke assistent voor emails, taken, en agenda
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-carbon-3">
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">📧 Unified Inbox</h3>
-            <p className="text-sm text-gray-70">
-              2 Gmail accounts in één overzicht
-            </p>
-          </div>
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">✅ Taken</h3>
-            <p className="text-sm text-gray-70">
-              Todoist integratie voor dagelijks werk
-            </p>
-          </div>
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">📅 Agenda</h3>
-            <p className="text-sm text-gray-70">
-              Google Calendar sync
-            </p>
-          </div>
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">📰 Nieuws</h3>
-            <p className="text-sm text-gray-70">
-              Branche trends via Perplexity
-            </p>
-          </div>
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">💬 Telegram</h3>
-            <p className="text-sm text-gray-70">
-              2x daags samenvattingen
-            </p>
-          </div>
-          <div className="p-carbon-4 bg-white border border-gray-20 rounded hover:border-blue-60 transition-colors">
-            <h3 className="font-medium mb-carbon-2 text-gray-100">🤖 AI Summaries</h3>
-            <p className="text-sm text-gray-70">
-              Slimme dagelijkse briefings
-            </p>
-          </div>
-        </div>
-        <div className="mt-carbon-5 text-center">
-          <Link href="/dashboard">
-            <Button size="lg" className="bg-blue-60 hover:bg-blue-70 text-white">
-              Open Dashboard 🚀
-            </Button>
-          </Link>
-          <p className="text-sm text-gray-70 mt-carbon-3">
-            Powered by IBM Carbon Design System
-          </p>
-        </div>
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-white dark:bg-[#050505] transition-colors duration-500">
+      {/* Background Ambient Glow */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 dark:bg-blue-500/5 blur-[120px] rounded-full animate-pulse" />
       </div>
+
+      <div className="z-10 flex flex-col items-center">
+        {/* Logo Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2, ease: EASE.out }}
+          className="mb-16 relative w-36 h-16"
+        >
+          {/* Light Mode Logo */}
+          <div className="dark:hidden block relative w-full h-full">
+            <Image
+              src="/logo-black.png"
+              alt="Memørtium Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+          {/* Dark Mode Logo */}
+          <div className="hidden dark:block relative w-full h-full">
+            <Image
+              src="/logo-white.png"
+              alt="Memørtium Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        </motion.div>
+
+        {/* Enter Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 1.2, ease: EASE.out }}
+        >
+          <Link href="/dashboard">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative px-10 py-3 rounded-full overflow-hidden bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 dark:text-gray-500 group-hover:text-black dark:group-hover:text-white transition-colors">
+                  Enter
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </motion.button>
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* Footer Branding */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.8, duration: 1.5 }}
+        className="absolute bottom-12"
+      >
+        <p className="text-[9px] uppercase tracking-[0.4em] text-gray-400/30 dark:text-white/10">
+          Powered by COSMO Orchestrator
+        </p>
+      </motion.div>
     </main>
   );
 }
