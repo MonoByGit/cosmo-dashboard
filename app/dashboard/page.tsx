@@ -5,7 +5,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   Mail, CheckSquare, Calendar, Newspaper, Bot, Sun, Moon, Send,
   Plus, Maximize2, Minimize2, Sparkles, AlertCircle, Inbox,
-  FileText, Database, Layout, FolderOpen, MessageSquare, ArrowRight, CheckCircle, RefreshCw, Mic, MicOff
+  FileText, Database, Layout, FolderOpen, MessageSquare, ArrowRight, CheckCircle, RefreshCw, Mic, MicOff,
+  Package, Camera, HelpCircle, AlertTriangle, Briefcase
 } from "lucide-react";
 import {
   DURATION, STAGGER, EASE,
@@ -108,11 +109,15 @@ export default function DashboardPage() {
     },
   ];
 
-  const tasks = [
+  const [localTasks, setLocalTasks] = useState([
     { id: 1, title: "Dashboard design reviewen", priority: 1, completed: false, link: "https://todoist.com" },
     { id: 2, title: "API documentatie updaten", priority: 2, completed: false, link: "https://todoist.com" },
     { id: 3, title: "Klant meeting voorbereiden", priority: 1, completed: true, link: "https://todoist.com" },
-  ];
+  ]);
+
+  const toggleTask = (id: number) => {
+    setLocalTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  };
 
   const events = [
     { id: 1, title: "Team Standup", time: "14:00 - 14:30", status: "aankomend", link: "https://calendar.google.com" },
@@ -153,14 +158,14 @@ export default function DashboardPage() {
   ];
 
   const getCategoryIcon = (category: string) => {
-    const map: Record<string, string> = {
-      'ORDER': '📦',
-      'PHOTO_REQUEST': '📸',
-      'QUESTION': '❓',
-      'COMPLAINT': '⚠️',
-      'BUSINESS': '💼'
+    const map: Record<string, any> = {
+      'ORDER': <Package className="w-4 h-4" />,
+      'PHOTO_REQUEST': <Camera className="w-4 h-4" />,
+      'QUESTION': <HelpCircle className="w-4 h-4" />,
+      'COMPLAINT': <AlertTriangle className="w-4 h-4" />,
+      'BUSINESS': <Briefcase className="w-4 h-4" />
     };
-    return map[category] || '📧';
+    return map[category] || <Mail className="w-4 h-4" />;
   };
 
   const getUrgencyDot = (urgency: string) => {
@@ -243,9 +248,6 @@ export default function DashboardPage() {
                 <h2 className="text-lg font-semibold">Executive Samenvatting</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Je dagelijkse briefing</p>
               </div>
-              <button className="ml-auto glass-btn w-8 h-8 p-0 flex items-center justify-center" title="Ververs briefing">
-                <RefreshCw className="w-4 h-4" />
-              </button>
             </div>
 
             {/* AI Generated Briefing */}
@@ -269,15 +271,22 @@ export default function DashboardPage() {
                       onClick={() => setSelectedItem({ type: 'urgent', data: item })}
                       className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all hover:border-opacity-70 cursor-pointer active:scale-[0.98]`}
                     >
-                      <div className="flex items-start gap-2">
-                        <span className="text-lg">{getCategoryIcon(item.category)}</span>
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg bg-white/20 dark:bg-white/10 ${item.urgency === 'high' ? 'text-red-500' : item.urgency === 'medium' ? 'text-orange-500' : 'text-blue-500'}`}>
+                          {getCategoryIcon(item.category)}
+                        </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium mb-1 text-gray-900 dark:text-white">{item.summary}</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
+                          <p className="text-sm font-semibold mb-1 text-gray-900 dark:text-white">{item.summary}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-300">
                             → {item.suggestedAction}
                           </p>
                         </div>
-                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-gray-200/80 dark:bg-white/20 text-gray-700 dark:text-gray-200 border border-gray-300/50 dark:border-white/20">
+                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${item.urgency === 'high'
+                          ? 'bg-red-100/80 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200'
+                          : item.urgency === 'medium'
+                            ? 'bg-orange-100/80 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-200'
+                            : 'bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200'
+                          }`}>
                           {item.urgency}
                         </span>
                       </div>
@@ -291,34 +300,34 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-3 rounded-xl bg-gray-100/50 dark:bg-white/5 border border-gray-300/50 dark:border-white/10">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">📦</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Bestellingen</span>
+                  <Package className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Bestellingen</span>
                 </div>
-                <p className="text-2xl font-semibold">{executiveSummary.stats.orders}</p>
+                <p className="text-2xl font-bold">{executiveSummary.stats.orders}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-gray-100/50 dark:bg-white/5 border border-gray-300/50 dark:border-white/10">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">📸</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Foto Aanvragen</span>
+                  <Camera className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Foto Aanvragen</span>
                 </div>
-                <p className="text-2xl font-semibold">{executiveSummary.stats.photoRequests}</p>
+                <p className="text-2xl font-bold">{executiveSummary.stats.photoRequests}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-gray-100/50 dark:bg-white/5 border border-gray-300/50 dark:border-white/10">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">❓</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Vragen</span>
+                  <HelpCircle className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Vragen</span>
                 </div>
-                <p className="text-2xl font-semibold">{executiveSummary.stats.questions}</p>
+                <p className="text-2xl font-bold">{executiveSummary.stats.questions}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-gray-100/50 dark:bg-white/5 border border-gray-300/50 dark:border-white/10">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">💰</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">Potentieel</span>
+                  <Briefcase className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Potentieel</span>
                 </div>
-                <p className="text-2xl font-semibold">
+                <p className="text-2xl font-bold">
                   €{executiveSummary.stats.potentialRevenue.toLocaleString()}
                 </p>
               </div>
@@ -410,11 +419,11 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">Vandaag's Taken</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{tasks.filter(t => !t.completed).length} resterend</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{localTasks.filter(t => !t.completed).length} resterend</p>
                 </div>
               </div>
               <div className="space-y-2">
-                {tasks.map((task, index) => (
+                {localTasks.map((task, index) => (
                   <motion.div
                     key={task.id}
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors cursor-pointer group"
@@ -422,6 +431,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + index * 0.05, ease: EASE.out }}
                     whileHover={{ x: 4, transition: { duration: 0.2 } }}
+                    onClick={() => toggleTask(task.id)}
                   >
                     <motion.div
                       whileTap={{ scale: 0.8 }}
@@ -429,12 +439,9 @@ export default function DashboardPage() {
                       transition={{ duration: 0.2, ease: EASE.spring }}
                       className="flex items-center"
                     >
-                      <input
-                        type="checkbox"
-                        checked={task.completed}
-                        className="w-4 h-4 rounded border-gray-400 dark:border-white/30 text-blue-400 focus:ring-blue-400 cursor-pointer"
-                        readOnly
-                      />
+                      <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-green-500 border-green-500' : 'border-gray-400 dark:border-white/30'}`}>
+                        {task.completed && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                      </div>
                     </motion.div>
                     <motion.span
                       animate={task.completed ? { opacity: 0.5, x: 5 } : { opacity: 1, x: 0 }}
@@ -457,6 +464,7 @@ export default function DashboardPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="opacity-0 group-hover:opacity-100 glass-btn py-1 px-2 text-[10px] uppercase tracking-wider transition-all bg-white/50 dark:bg-white/10"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         Open
                       </a>
@@ -493,7 +501,7 @@ export default function DashboardPage() {
                     className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all cursor-pointer bg-gray-100/30 dark:bg-white/5 group active:scale-[0.98]"
                   >
                     <div className="flex justify-between items-center mb-2">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-400/20">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
                         {item.category}
                       </span>
                       <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{item.time}</span>
@@ -509,7 +517,7 @@ export default function DashboardPage() {
 
             {/* QUOTE WIDGET */}
             <motion.div
-              className="glass-panel p-6 flex flex-col justify-center items-center text-center"
+              className="glass-panel p-8 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[220px]"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: DURATION.normal / 1000, delay: 0.42, ease: EASE.spring }}
@@ -519,14 +527,24 @@ export default function DashboardPage() {
                 transition: { duration: DURATION.fast / 1000, ease: EASE.out }
               }}
             >
-              <div className="max-w-md mx-auto">
-                <div className="glass-icon-container mb-4 mx-auto">
-                  <Sparkles className="w-6 h-6" />
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0">
+                <img
+                  src="/quote_bg_tree.png"
+                  alt="Tree background"
+                  className="w-full h-full object-cover opacity-40 dark:opacity-30"
+                />
+                <div className="absolute inset-0 bg-white/10 dark:bg-black/20" />
+              </div>
+
+              <div className="relative z-10 max-w-md">
+                <div className="glass-icon-container mb-6 mx-auto bg-white/50 dark:bg-black/50 backdrop-blur-md">
+                  <Sparkles className="w-6 h-6 text-blue-500" />
                 </div>
-                <blockquote className="text-lg font-medium italic mb-3">
+                <blockquote className="text-xl font-bold italic mb-4 text-gray-900 dark:text-white leading-tight drop-shadow-sm">
                   "De beste tijd om een boom te planten was 20 jaar geleden. De op één na beste tijd is nu."
                 </blockquote>
-                <p className="text-sm text-gray-600 dark:text-gray-400">— Chinees spreekwoord</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-300 drop-shadow-sm">— Chinees spreekwoord</p>
               </div>
             </motion.div>
           </div>
@@ -555,14 +573,21 @@ export default function DashboardPage() {
                   href={event.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex gap-3 p-3 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all bg-gray-100/50 dark:bg-white/5 group active:scale-[0.98]"
+                  className="flex gap-3 p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all bg-gray-100/50 dark:bg-white/5 group active:scale-[0.98]"
                 >
-                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 w-28 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{event.time}</div>
+                  <div className="text-sm font-bold text-gray-900 dark:text-gray-100 w-28 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {event.time}
+                  </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">{event.title}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300/60 dark:border-blue-400/30">
-                      {event.status}
-                    </span>
+                    <div className="flex justify-between items-start">
+                      <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{event.title}</p>
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${event.status === 'aankomend'
+                        ? 'bg-purple-100/80 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200/50'
+                        : 'bg-emerald-100/80 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/50'
+                        }`}>
+                        {event.status}
+                      </span>
+                    </div>
                   </div>
                 </a>
               ))}
@@ -810,24 +835,26 @@ export default function DashboardPage() {
             {selectedItem.type === 'urgent' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="glass-icon-container">
-                    <AlertCircle className="w-5 h-5 text-red-500" />
+                  <div className={`p-3 rounded-xl bg-opacity-20 flex items-center justify-center ${selectedItem.data.urgency === 'high' ? 'bg-red-500' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500' : 'bg-blue-500'}`}>
+                    {selectedItem.data.urgency === 'high' ? <AlertTriangle className="w-6 h-6 text-red-500" /> : selectedItem.data.urgency === 'medium' ? <HelpCircle className="w-6 h-6 text-orange-500" /> : <AlertCircle className="w-6 h-6 text-blue-500" />}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Urgente Actie Vereist</h2>
-                    <p className="text-sm text-red-500 font-medium">{selectedItem.data.urgency.toUpperCase()}</p>
+                    <p className={`text-sm font-bold uppercase tracking-wider ${selectedItem.data.urgency === 'high' ? 'text-red-500' : selectedItem.data.urgency === 'medium' ? 'text-orange-500' : 'text-blue-500'}`}>
+                      {selectedItem.data.urgency}
+                    </p>
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10 text-sm leading-relaxed">
-                  <p className="font-semibold mb-1">{selectedItem.data.summary}</p>
-                  <p className="text-gray-600 dark:text-gray-400">Deze taak heeft direct aandacht nodig.</p>
+                <div className={`p-6 rounded-2xl border text-sm leading-relaxed ${selectedItem.data.urgency === 'high' ? 'bg-red-500/5 border-red-500/10' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500/5 border-orange-500/10' : 'bg-blue-500/5 border-blue-500/10'}`}>
+                  <p className="font-bold text-lg mb-2 text-gray-900 dark:text-white leading-tight">{selectedItem.data.summary}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-base font-medium">Deze taak heeft direct aandacht nodig en vereist jouw expertise.</p>
                 </div>
                 <div className="flex justify-end pt-4">
                   <a
                     href={selectedItem.data.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="glass-btn flex items-center gap-2 bg-red-500 text-white border-none hover:bg-red-600"
+                    className={`glass-btn flex items-center gap-2 text-white border-none transition-all shadow-lg font-bold px-6 py-3 ${selectedItem.data.urgency === 'high' ? 'bg-red-500 hover:bg-red-600' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-500 hover:bg-blue-600'}`}
                   >
                     Actie ondernemen <ArrowRight className="w-4 h-4" />
                   </a>
