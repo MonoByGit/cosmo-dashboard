@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import {
   Mail, CheckSquare, Calendar, Newspaper, Bot, Sun, Moon, Send,
   Plus, Maximize2, Minimize2, Sparkles, AlertCircle, Inbox,
@@ -73,8 +73,8 @@ export default function DashboardPage() {
     },
     urgentItems: [
       { id: 1, category: 'COMPLAINT', urgency: 'high', summary: 'Klacht: Camera niet geleverd', suggestedAction: 'Reageer binnen 2 uur', sourceUrl: 'https://mail.google.com' },
-      { id: 2, category: 'BUSINESS', urgency: 'high', summary: 'Vergaderverzoek: Portfolio review @ 14:00', suggestedAction: 'Bevestig aanwezigheid', sourceUrl: 'https://calendar.google.com' },
-      { id: 3, category: 'QUESTION', urgency: 'medium', summary: 'Vraag: Bruiloft pakket prijzen', suggestedAction: 'Stuur prijslijst', sourceUrl: 'https://mail.google.com' }
+      { id: 2, category: 'BUSINESS', urgency: 'normal', summary: 'Vergaderverzoek: Portfolio review @ 14:00', suggestedAction: 'Bevestig aanwezigheid', sourceUrl: 'https://calendar.google.com' },
+      { id: 3, category: 'QUESTION', urgency: 'low', summary: 'Vraag: Bruiloft pakket prijzen', suggestedAction: 'Stuur prijslijst', sourceUrl: 'https://mail.google.com' }
     ]
   };
 
@@ -242,9 +242,6 @@ export default function DashboardPage() {
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="glass-icon-container">
-                <Sparkles className="w-5 h-5" />
-              </div>
               <div>
                 <h2 className="text-lg font-semibold">Executive Samenvatting</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Je dagelijkse briefing</p>
@@ -270,12 +267,12 @@ export default function DashboardPage() {
                     <div
                       key={item.id}
                       onClick={() => setSelectedItem({ type: 'urgent', data: item })}
-                      className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all hover:border-opacity-70 cursor-pointer active:scale-[0.98]`}
+                      className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all cursor-pointer active:scale-[0.98]`}
                     >
                       <div className="flex items-start gap-4">
                         <div className={`p-2 rounded-xl flex items-center justify-center bg-white/40 dark:bg-white/10 ${item.urgency === 'high' ? 'text-red-500' :
-                            item.urgency === 'medium' ? 'text-amber-500' :
-                              item.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
+                          item.urgency === 'medium' ? 'text-amber-500' :
+                            item.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
                           }`}>
                           {item.urgency === 'high' ? <AlertTriangle className="w-5 h-5" /> :
                             item.urgency === 'medium' ? <AlertCircle className="w-5 h-5" /> :
@@ -288,12 +285,12 @@ export default function DashboardPage() {
                           </p>
                         </div>
                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border ${item.urgency === 'high'
-                            ? 'bg-red-100/60 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200/60'
-                            : item.urgency === 'medium'
-                              ? 'bg-amber-100/60 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200/60'
-                              : item.urgency === 'normal'
-                                ? 'bg-indigo-100/60 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200/60'
-                                : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
+                          ? 'bg-red-100/60 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200/60'
+                          : item.urgency === 'medium'
+                            ? 'bg-amber-100/60 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200/60'
+                            : item.urgency === 'normal'
+                              ? 'bg-indigo-100/60 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200/60'
+                              : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
                           }`}>
                           {item.urgency}
                         </span>
@@ -372,7 +369,7 @@ export default function DashboardPage() {
                     key={email.id}
                     onClick={() => setSelectedItem({ type: 'email', data: email })}
                     whileHover={{ scale: 1.01, x: 2 }}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer hover:border-gray-400/40 dark:hover:border-white/30 active:scale-[0.98] ${email.unread
+                    className={`p-3 rounded-xl border transition-all cursor-pointer active:scale-[0.98] ${email.unread
                       ? "bg-blue-500/10 border-blue-400/30"
                       : "bg-gray-100/50 dark:bg-white/5 border-gray-300/50 dark:border-white/10"
                       }`}
@@ -506,7 +503,7 @@ export default function DashboardPage() {
                     key={item.id}
                     onClick={() => setSelectedItem({ type: 'news', data: item })}
                     whileHover={{ scale: 1.01, x: 2 }}
-                    className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all cursor-pointer bg-gray-100/30 dark:bg-white/5 group active:scale-[0.98]"
+                    className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 transition-all cursor-pointer bg-gray-100/30 dark:bg-white/5 group active:scale-[0.98]"
                   >
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">
@@ -535,14 +532,10 @@ export default function DashboardPage() {
                 transition: { duration: DURATION.fast / 1000, ease: EASE.out }
               }}
             >
-              {/* Background Image with Overlay */}
+              {/* Minimalist Background Decoration */}
               <div className="absolute inset-0 z-0">
-                <img
-                  src="/quote_bg_tree.png"
-                  alt="Tree background"
-                  className="w-full h-full object-cover opacity-40 dark:opacity-30"
-                />
-                <div className="absolute inset-0 bg-white/10 dark:bg-black/20" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-blue-400/5 blur-3xl rounded-full -mr-16 -mt-16" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 dark:bg-purple-400/5 blur-3xl rounded-full -ml-16 -mb-16" />
               </div>
 
               <div className="relative z-10 max-w-sm px-4">
@@ -578,7 +571,7 @@ export default function DashboardPage() {
                   href={event.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex gap-4 p-4 rounded-xl border border-gray-200/60 dark:border-white/5 hover:border-gray-300/80 dark:hover:border-white/10 transition-all bg-white/40 dark:bg-white/5 group active:scale-[0.98]"
+                  className="flex gap-4 p-4 rounded-xl border border-gray-200/60 dark:border-white/5 transition-all bg-white/40 dark:bg-white/5 group active:scale-[0.98]"
                 >
                   <div className="text-sm font-medium text-gray-500 dark:text-gray-400 w-24 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {event.time}
@@ -587,8 +580,8 @@ export default function DashboardPage() {
                     <div className="flex justify-between items-center">
                       <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors">{event.title}</p>
                       <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border ${event.status === 'aankomend'
-                          ? 'bg-purple-100/60 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200/60'
-                          : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
+                        ? 'bg-purple-100/60 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200/60'
+                        : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
                         }`}>
                         {event.status}
                       </span>
@@ -600,289 +593,296 @@ export default function DashboardPage() {
           </motion.div>
         </motion.div>
 
-        {/* RIGHT COLUMN: Chat Sidebar (1/3 width on desktop, overlay on mobile) */}
-        <div className={`lg:col-span-1 ${isChatOpen ? 'fixed inset-0 z-50 lg:relative' : 'hidden lg:block self-stretch'}`}>
-          {/* Mobile backdrop */}
-          {isChatOpen && (
-            <div
-              className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[90] lg:hidden"
-              onClick={() => setIsChatOpen(false)}
-            />
-          )}
+        {/* RIGHT COLUMN: Chat Sidebar */}
+        <div className={`lg:col-span-1 ${isChatOpen ? 'fixed inset-0 z-50 lg:relative' : 'hidden lg:block'}`}>
+          <div className="lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)] lg:flex lg:flex-col">
+            {/* Mobile backdrop */}
+            {isChatOpen && (
+              <div
+                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[90] lg:hidden"
+                onClick={() => setIsChatOpen(false)}
+              />
+            )}
 
-          {/* Chat container */}
-          <motion.div
-            className={`glass-panel p-6 flex flex-col ${isChatOpen ? 'fixed inset-0 z-[100] rounded-none bg-white/95 dark:bg-gray-900/95' : 'h-full'}`}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: DURATION.normal / 1000, delay: 0.58, ease: EASE.spring }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="glass-icon-container">
-                  <Bot className="w-5 h-5" />
-                </div>
-                <h2 className="text-lg font-semibold">AI Assistent</h2>
-              </div>
-              {/* Close button for mobile */}
-              {isChatOpen && (
-                <button
-                  onClick={() => setIsChatOpen(false)}
-                  className="glass-btn w-10 h-10 p-0 flex items-center justify-center lg:hidden"
-                >
-                  <Minimize2 className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-
-            {/* Quick Action Chips */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              {quickActions.slice(0, 3).map((action) => (
-                <button key={action.id} className="glass-chip text-xs">
-                  <action.icon className="w-3.5 h-3.5" />
-                  <span>{action.label}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="flex-1 overflow-y-auto mb-4 space-y-3">
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.3, ease: EASE.spring }}
-                className="p-3 rounded-xl bg-white/10 dark:bg-black/10 border border-gray-400/20 dark:border-white/10"
-              >
-                <p className="text-sm">Hoi Dusty! 🎯 Ik ben COSMO, je orchestrator. Stel me een vraag of upload een afbeelding voor analyse.</p>
-              </motion.div>
-
-              {/* Unified Listening Visualizer */}
-              {isListening && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 p-2 ml-2"
-                >
-                  <div className="flex gap-1">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <motion.div
-                        key={i}
-                        animate={{
-                          height: [6, 16, 6],
-                        }}
-                        transition={{
-                          duration: 0.6,
-                          repeat: Infinity,
-                          delay: i * 0.1,
-                          ease: "easeInOut"
-                        }}
-                        className="w-1 bg-blue-400/60 rounded-full"
-                      />
-                    ))}
+            {/* Chat container */}
+            <motion.div
+              className={`glass-panel p-6 flex flex-col ${isChatOpen ? 'fixed inset-0 z-[100] rounded-none bg-white/95 dark:bg-gray-900/95' : 'h-full shadow-xl'}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: DURATION.normal / 1000, delay: 0.58, ease: EASE.spring }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="glass-icon-container">
+                    <Bot className="w-5 h-5" />
                   </div>
-                  <span className="text-xs text-blue-400 font-medium">COSMO luistert...</span>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Input Area with Model Selector */}
-            <div className="space-y-3 mt-auto">
-              <div className="relative">
-                <div className="flex items-center gap-2 p-3 border border-gray-400/30 dark:border-white/20 rounded-xl bg-white/10 dark:bg-black/10">
-                  <button className="p-1.5 hover:bg-white/10 dark:hover:bg-black/10 rounded transition-colors" title="Voeg bestand toe">
-                    <Plus className="w-5 h-5" />
+                  <h2 className="text-lg font-semibold">AI Assistent</h2>
+                </div>
+                {/* Close button for mobile */}
+                {isChatOpen && (
+                  <button
+                    onClick={() => setIsChatOpen(false)}
+                    className="glass-btn w-10 h-10 p-0 flex items-center justify-center lg:hidden"
+                  >
+                    <Minimize2 className="w-5 h-5" />
                   </button>
+                )}
+              </div>
 
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder={isListening ? "Ik luister naar je..." : "Hoe kan ik je helpen vandaag, Dusty?"}
-                    className="flex-1 outline-none text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-white/50"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        // Handle send logic here
-                        setChatInput("");
-                      }
-                    }}
-                  />
+              {/* Quick Action Chips */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {quickActions.slice(0, 3).map((action) => (
+                  <button key={action.id} className="glass-chip text-xs">
+                    <action.icon className="w-3.5 h-3.5" />
+                    <span>{action.label}</span>
+                  </button>
+                ))}
+              </div>
 
-                  <div className="flex items-center gap-1">
-                    <motion.button
-                      onClick={() => setIsListening(!isListening)}
-                      animate={isListening ? { scale: [1, 1.2, 1] } : { scale: 1 }}
-                      transition={isListening ? { duration: 1, repeat: Infinity, ease: "easeInOut" } : {}}
-                      className={`p-1.5 rounded transition-colors ${isListening ? 'text-blue-500 bg-blue-500/10' : 'hover:bg-white/10 dark:hover:bg-black/10'}`}
-                      title={isListening ? "Stop met praten" : "Begin met praten"}
-                    >
-                      {isListening ? <Mic className="w-5 h-5 text-blue-500" /> : <Mic className="w-5 h-5" />}
-                    </motion.button>
+              <div className="flex-1 overflow-y-auto mb-4 space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3, ease: EASE.spring }}
+                  className="p-3 rounded-xl bg-white/10 dark:bg-black/10 border border-gray-400/20 dark:border-white/10"
+                >
+                  <p className="text-sm">Hoi Dusty! 🎯 Ik ben COSMO, je orchestrator. Stel me een vraag of upload een afbeelding voor analyse.</p>
+                </motion.div>
 
-                    <button
-                      className="p-1.5 hover:bg-white/10 dark:hover:bg-black/10 rounded transition-colors"
-                      onClick={() => setChatInput("")}
-                    >
-                      <Send className="w-5 h-5" />
+                {/* Unified Listening Visualizer */}
+                {isListening && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 p-2 ml-2"
+                  >
+                    <div className="flex gap-1">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <motion.div
+                          key={i}
+                          animate={{
+                            height: [6, 16, 6],
+                          }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            delay: i * 0.1,
+                            ease: "easeInOut"
+                          }}
+                          className="w-1 bg-blue-400/60 rounded-full"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-blue-400 font-medium">COSMO luistert...</span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Input Area with Model Selector */}
+              <div className="space-y-3 mt-auto">
+                <div className="relative">
+                  <div className="flex items-center gap-2 p-3 border border-gray-400/30 dark:border-white/20 rounded-xl bg-white/10 dark:bg-black/10">
+                    <button className="p-1.5 hover:bg-white/10 dark:hover:bg-black/10 rounded transition-colors" title="Voeg bestand toe">
+                      <Plus className="w-5 h-5" />
                     </button>
+
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={isListening ? "Ik luister naar je..." : "Hoe kan ik je helpen vandaag, Dusty?"}
+                      className="flex-1 outline-none text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-white/50"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          // Handle send logic here
+                          setChatInput("");
+                        }
+                      }}
+                    />
+
+                    <div className="flex items-center gap-1">
+                      <motion.button
+                        onClick={() => setIsListening(!isListening)}
+                        animate={isListening ? { scale: [1, 1.2, 1] } : { scale: 1 }}
+                        transition={isListening ? { duration: 1, repeat: Infinity, ease: "easeInOut" } : {}}
+                        className={`p-1.5 rounded transition-colors ${isListening ? 'text-blue-500 bg-blue-500/10' : 'hover:bg-white/10 dark:hover:bg-black/10'}`}
+                        title={isListening ? "Stop met praten" : "Begin met praten"}
+                      >
+                        {isListening ? <Mic className="w-5 h-5 text-blue-500" /> : <Mic className="w-5 h-5" />}
+                      </motion.button>
+
+                      <button
+                        className="p-1.5 hover:bg-white/10 dark:hover:bg-black/10 rounded transition-colors"
+                        onClick={() => setChatInput("")}
+                      >
+                        <Send className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Model selector */}
+                <div className="flex justify-end">
+                  <div className="relative group">
+                    <select
+                      value={selectedLLM}
+                      onChange={(e) => setSelectedLLM(e.target.value)}
+                      className="glass-chip text-sm px-4 py-2 cursor-pointer bg-white/40 dark:bg-black/40 hover:bg-white/60 dark:hover:bg-black/60 shadow-sm transition-all appearance-none outline-none border-gray-300/50 dark:border-white/20 inline-block"
+                    >
+                      {llmOptions.map((option) => (
+                        <option key={option} value={option} className="bg-white dark:bg-gray-900">{option}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
-
-              {/* Model selector */}
-              <div className="flex justify-end">
-                <select
-                  value={selectedLLM}
-                  onChange={(e) => setSelectedLLM(e.target.value)}
-                  className="glass-chip text-sm px-3 py-1.5 cursor-pointer bg-white/20 dark:bg-black/20 appearance-none outline-none border-none"
-                >
-                  {llmOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
+
       {/* Detail Modal */}
-      {selectedItem && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedItem(null)}
-            className="absolute inset-0 bg-black/40 backdrop-blur-md"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="relative w-full max-w-lg glass-panel p-8 shadow-2xl"
-          >
-            <button
+      <AnimatePresence mode="wait">
+        {selectedItem && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative w-full max-w-lg glass-panel p-8 shadow-2xl"
             >
-              <Minimize2 className="w-4 h-4" />
-            </button>
+              <button
+                onClick={() => setSelectedItem(null)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </button>
 
-            {selectedItem.type === 'email' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="glass-icon-container">
-                    <Mail className="w-5 h-5" />
+              {selectedItem.type === 'email' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="glass-icon-container">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">{selectedItem.data.sender}</h2>
+                      <p className="text-sm text-gray-500">{selectedItem.data.subject}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold">{selectedItem.data.sender}</h2>
-                    <p className="text-sm text-gray-500">{selectedItem.data.subject}</p>
+                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed whitespace-pre-line">
+                    {selectedItem.data.fullContent}
+                  </div>
+                  <div className="flex justify-end pt-4">
+                    <a
+                      href={selectedItem.data.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-btn flex items-center gap-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                    >
+                      Open in Gmail <ArrowRight className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed whitespace-pre-line">
-                  {selectedItem.data.fullContent}
-                </div>
-                <div className="flex justify-end pt-4">
-                  <a
-                    href={selectedItem.data.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="glass-btn flex items-center gap-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                  >
-                    Open in Gmail <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            )}
+              )}
 
-            {selectedItem.type === 'news' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="glass-icon-container">
-                    <Newspaper className="w-5 h-5" />
+              {selectedItem.type === 'news' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="glass-icon-container">
+                      <Newspaper className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">{selectedItem.data.title}</h2>
+                      <p className="text-sm text-gray-500">{selectedItem.data.source} • {selectedItem.data.time}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold">{selectedItem.data.title}</h2>
-                    <p className="text-sm text-gray-500">{selectedItem.data.source} • {selectedItem.data.time}</p>
+                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed">
+                    <h3 className="font-semibold mb-2 text-blue-500">Perplexity Samenvatting</h3>
+                    {selectedItem.data.summary}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Bronnen</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedItem.data.sources.map((src: string, i: number) => (
+                        <a
+                          key={i}
+                          href={src}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-500 hover:underline bg-blue-500/5 px-2 py-1 rounded"
+                        >
+                          Source {i + 1}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-end pt-4">
+                    <a
+                      href={selectedItem.data.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-btn flex items-center gap-2"
+                    >
+                      Bekijk op Perplexity <ArrowRight className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed">
-                  <h3 className="font-semibold mb-2 text-blue-500">Perplexity Samenvatting</h3>
-                  {selectedItem.data.summary}
-                </div>
-                <div className="space-y-2">
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Bronnen</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedItem.data.sources.map((src: string, i: number) => (
-                      <a
-                        key={i}
-                        href={src}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-500 hover:underline bg-blue-500/5 px-2 py-1 rounded"
-                      >
-                        Source {i + 1}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex justify-end pt-4">
-                  <a
-                    href={selectedItem.data.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="glass-btn flex items-center gap-2"
-                  >
-                    Bekijk op Perplexity <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            )}
+              )}
 
-            {selectedItem.type === 'urgent' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`p-3 rounded-xl bg-opacity-10 flex items-center justify-center ${selectedItem.data.urgency === 'high' ? 'bg-red-500 text-red-500' :
-                    selectedItem.data.urgency === 'medium' ? 'bg-amber-500 text-amber-500' :
-                      selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 text-indigo-500' : 'bg-emerald-500 text-emerald-500'
-                    }`}>
-                    {selectedItem.data.urgency === 'high' ? <AlertTriangle className="w-6 h-6" /> :
-                      selectedItem.data.urgency === 'medium' ? <AlertCircle className="w-6 h-6" /> :
-                        selectedItem.data.urgency === 'normal' ? <Mail className="w-6 h-6" /> : <Package className="w-6 h-6" />}
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold">Urgente Actie Vereist</h2>
-                    <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedItem.data.urgency === 'high' ? 'text-red-500' :
-                      selectedItem.data.urgency === 'medium' ? 'text-amber-500' :
-                        selectedItem.data.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
+              {selectedItem.type === 'urgent' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className={`p-3 rounded-xl bg-opacity-10 flex items-center justify-center ${selectedItem.data.urgency === 'high' ? 'bg-red-500 text-red-500' :
+                      selectedItem.data.urgency === 'medium' ? 'bg-amber-500 text-amber-500' :
+                        selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 text-indigo-500' : 'bg-emerald-500 text-emerald-500'
                       }`}>
-                      {selectedItem.data.urgency}
-                    </p>
+                      {selectedItem.data.urgency === 'high' ? <AlertTriangle className="w-6 h-6" /> :
+                        selectedItem.data.urgency === 'medium' ? <AlertCircle className="w-6 h-6" /> :
+                          selectedItem.data.urgency === 'normal' ? <Mail className="w-6 h-6" /> : <Package className="w-6 h-6" />}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">Urgente Actie Vereist</h2>
+                      <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedItem.data.urgency === 'high' ? 'text-red-500' :
+                        selectedItem.data.urgency === 'medium' ? 'text-amber-500' :
+                          selectedItem.data.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
+                        }`}>
+                        {selectedItem.data.urgency}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`p-6 rounded-2xl border text-sm leading-relaxed ${selectedItem.data.urgency === 'high' ? 'bg-red-500/5 border-red-500/10' :
+                    selectedItem.data.urgency === 'medium' ? 'bg-amber-500/5 border-amber-500/10' :
+                      selectedItem.data.urgency === 'normal' ? 'bg-indigo-500/5 border-indigo-500/10' : 'bg-emerald-500/5 border-emerald-500/10'
+                    }`}>
+                    <p className="font-bold text-lg mb-2 text-gray-900 dark:text-white leading-tight">{selectedItem.data.summary}</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-base font-medium">Deze taak heeft direct aandacht nodig en vereist jouw expertise.</p>
+                  </div>
+                  <div className="flex justify-end pt-4">
+                    <a
+                      href={selectedItem.data.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`glass-btn flex items-center gap-2 text-white border-none transition-all shadow-lg font-bold px-6 py-3 ${selectedItem.data.urgency === 'high' ? 'bg-red-500 hover:bg-red-600' :
+                        selectedItem.data.urgency === 'medium' ? 'bg-amber-500 hover:bg-amber-600' :
+                          selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-emerald-500 hover:bg-emerald-600'
+                        }`}
+                    >
+                      Actie ondernemen <ArrowRight className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
-                <div className={`p-6 rounded-2xl border text-sm leading-relaxed ${selectedItem.data.urgency === 'high' ? 'bg-red-500/5 border-red-500/10' :
-                  selectedItem.data.urgency === 'medium' ? 'bg-amber-500/5 border-amber-500/10' :
-                    selectedItem.data.urgency === 'normal' ? 'bg-indigo-500/5 border-indigo-500/10' : 'bg-emerald-500/5 border-emerald-500/10'
-                  }`}>
-                  <p className="font-bold text-lg mb-2 text-gray-900 dark:text-white leading-tight">{selectedItem.data.summary}</p>
-                  <p className="text-gray-600 dark:text-gray-400 text-base font-medium">Deze taak heeft direct aandacht nodig en vereist jouw expertise.</p>
-                </div>
-                <div className="flex justify-end pt-4">
-                  <a
-                    href={selectedItem.data.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`glass-btn flex items-center gap-2 text-white border-none transition-all shadow-lg font-bold px-6 py-3 ${selectedItem.data.urgency === 'high' ? 'bg-red-500 hover:bg-red-600' :
-                      selectedItem.data.urgency === 'medium' ? 'bg-amber-500 hover:bg-amber-600' :
-                        selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-emerald-500 hover:bg-emerald-600'
-                      }`}
-                  >
-                    Actie ondernemen <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </div>
-      )}
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
