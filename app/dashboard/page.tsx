@@ -15,23 +15,25 @@ import {
 import { useMotionValue, useSpring, useTransform } from "framer-motion";
 
 export default function DashboardPage() {
+  const [selectedItem, setSelectedItem] = useState<{
+    type: 'email' | 'task' | 'news' | 'urgent';
+    data: any;
+  } | null>(null);
+
   const [isDark, setIsDark] = useState(false);
   const [selectedLLM, setSelectedLLM] = useState("Claude");
   const [chatInput, setChatInput] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
-  // Scroll locking for mobile chat
+  // Scroll locking for modals
   useEffect(() => {
-    if (isChatOpen && window.innerWidth < 1024) {
+    if ((isChatOpen && window.innerWidth < 1024) || selectedItem) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isChatOpen]);
+  }, [isChatOpen, selectedItem]);
 
   const toggleDarkMode = () => {
     setIsDark(!isDark);
@@ -69,9 +71,9 @@ export default function DashboardPage() {
       potentialRevenue: 2500
     },
     urgentItems: [
-      { id: 1, category: 'COMPLAINT', urgency: 'high', summary: 'Klacht: Camera niet geleverd', suggestedAction: 'Reageer binnen 2 uur' },
-      { id: 2, category: 'BUSINESS', urgency: 'high', summary: 'Vergaderverzoek: Portfolio review @ 14:00', suggestedAction: 'Bevestig aanwezigheid' },
-      { id: 3, category: 'QUESTION', urgency: 'medium', summary: 'Vraag: Bruiloft pakket prijzen', suggestedAction: 'Stuur prijslijst' }
+      { id: 1, category: 'COMPLAINT', urgency: 'high', summary: 'Klacht: Camera niet geleverd', suggestedAction: 'Reageer binnen 2 uur', sourceUrl: 'https://mail.google.com' },
+      { id: 2, category: 'BUSINESS', urgency: 'high', summary: 'Vergaderverzoek: Portfolio review @ 14:00', suggestedAction: 'Bevestig aanwezigheid', sourceUrl: 'https://calendar.google.com' },
+      { id: 3, category: 'QUESTION', urgency: 'medium', summary: 'Vraag: Bruiloft pakket prijzen', suggestedAction: 'Stuur prijslijst', sourceUrl: 'https://mail.google.com' }
     ]
   };
 
@@ -81,41 +83,62 @@ export default function DashboardPage() {
       id: 1, account: 1, sender: "Jan de Vries", subject: "Q4 Planning Meeting", time: "10:30",
       unread: true, category: 'BUSINESS', urgency: 'high',
       aiSummary: "Vergaderverzoek voor Q4 planning bespreking",
+      fullContent: "Beste Dusty,\n\nKunnen we deze week de Q4 planning doornemen? Ik heb woensdag om 14:00 tijd.\n\nGroet,\nJan",
       suggestedAction: "Bevestig aanwezigheid",
-      estimatedValue: null
+      estimatedValue: null,
+      link: "https://mail.google.com"
     },
     {
       id: 2, account: 2, sender: "Sophie Bakker", subject: "Bruiloft fotografie aanvraag", time: "09:15",
       unread: true, category: 'PHOTO_REQUEST', urgency: 'medium',
       aiSummary: "Bruiloftsfotografie aanvraag voor juni 2026",
+      fullContent: "Hoi! We zijn op zoek naar een fotograaf voor onze bruiloft op 12 juni 2026 in Utrecht. Ben jij nog beschikbaar?\n\nBedankt, Sophie",
       suggestedAction: "Stuur prijzen en beschikbaarheid",
-      estimatedValue: 1500
+      estimatedValue: 1500,
+      link: "https://mail.google.com"
     },
     {
       id: 3, account: 1, sender: "Peter Jansen", subject: "Product bestelling #1234", time: "Gisteren",
       unread: false, category: 'ORDER', urgency: 'low',
       aiSummary: "Bevestiging bestelling camera apparatuur",
+      fullContent: "Je bestelling #1234 is succesvol geplaatst. We verwachten deze morgen te verzenden.",
       suggestedAction: "Verwerk en verzend",
-      estimatedValue: null
+      estimatedValue: null,
+      link: "https://mail.google.com"
     },
   ];
 
   const tasks = [
-    { id: 1, title: "Dashboard design reviewen", priority: 1, completed: false },
-    { id: 2, title: "API documentatie updaten", priority: 2, completed: false },
-    { id: 3, title: "Klant meeting voorbereiden", priority: 1, completed: true },
+    { id: 1, title: "Dashboard design reviewen", priority: 1, completed: false, link: "https://todoist.com" },
+    { id: 2, title: "API documentatie updaten", priority: 2, completed: false, link: "https://todoist.com" },
+    { id: 3, title: "Klant meeting voorbereiden", priority: 1, completed: true, link: "https://todoist.com" },
   ];
 
   const events = [
-    { id: 1, title: "Team Standup", time: "14:00 - 14:30", status: "aankomend" },
-    { id: 2, title: "Design Review", time: "15:00 - 16:00", status: "aankomend" },
-    { id: 3, title: "1-op-1 met Manager", time: "Morgen 10:00", status: "gepland" },
+    { id: 1, title: "Team Standup", time: "14:00 - 14:30", status: "aankomend", link: "https://calendar.google.com" },
+    { id: 2, title: "Design Review", time: "15:00 - 16:00", status: "aankomend", link: "https://calendar.google.com" },
+    { id: 3, title: "1-op-1 met Manager", time: "Morgen 10:00", status: "gepland", link: "https://calendar.google.com" },
   ];
 
   const news = [
-    { id: 1, title: "AI Tools Hervormen Fotografie Workflow", category: "Fotografie", source: "TechCrunch", time: "2u geleden" },
-    { id: 2, title: "Next.js 15 Uitgebracht met Turbopack", category: "Tech", source: "Vercel Blog", time: "5u geleden" },
-    { id: 3, title: "Digitale Trends in Uitvaartdiensten", category: "Uitvaart", source: "Branche Nieuws", time: "1d geleden" },
+    {
+      id: 1, title: "AI Tools Hervormen Fotografie Workflow", category: "Fotografie", source: "TechCrunch", time: "2u geleden",
+      summary: "Nieuwe AI-gedreven tools maken het bewerken van duizenden foto's in enkele minuten mogelijk. Adobe en Skylum lopen voorop.",
+      sources: ["https://techcrunch.com", "https://perplexity.ai"],
+      link: "https://perplexity.ai"
+    },
+    {
+      id: 2, title: "Next.js 15 Uitgebracht met Turbopack", category: "Tech", source: "Vercel Blog", time: "5u geleden",
+      summary: "Vercel heeft Next.js 15 aangekondigd met Turbopack als standaard dev engine, wat zorgt voor 70% snellere herlaadtijden.",
+      sources: ["https://vercel.com/blog"],
+      link: "https://perplexity.ai"
+    },
+    {
+      id: 3, title: "Digitale Trends in Uitvaartdiensten", category: "Uitvaart", source: "Branche Nieuws", time: "1d geleden",
+      summary: "De uitvaartbranche ziet een stijging in digitale gedenkpagina's en live-streaming diensten.",
+      sources: ["https://example.com"],
+      link: "https://perplexity.ai"
+    },
   ];
 
   const llmOptions = ["Claude", "GPT-4", "Gemini", "Perplexity"];
@@ -152,9 +175,9 @@ export default function DashboardPage() {
   const getUrgencyColor = (urgency: string) => {
     // Apple-style: subtle backgrounds with high text contrast
     const map: Record<string, string> = {
-      'high': 'bg-red-50/80 dark:bg-red-500/10 border-red-200/60 dark:border-red-400/30',
-      'medium': 'bg-orange-50/80 dark:bg-orange-500/10 border-orange-200/60 dark:border-orange-400/30',
-      'low': 'bg-blue-50/80 dark:bg-blue-500/10 border-blue-200/60 dark:border-blue-400/30'
+      'high': 'bg-red-50 dark:bg-red-500/10 border-red-200/60 dark:border-red-400/30',
+      'medium': 'bg-orange-50 dark:bg-orange-500/10 border-orange-200/60 dark:border-orange-400/30',
+      'low': 'bg-blue-50 dark:bg-blue-500/10 border-blue-200/60 dark:border-blue-400/30'
     };
     return map[urgency] || 'bg-gray-50/80 dark:bg-white/5 border-gray-200/60 dark:border-white/10';
   };
@@ -243,7 +266,8 @@ export default function DashboardPage() {
                   {executiveSummary.urgentItems.map((item) => (
                     <div
                       key={item.id}
-                      className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all hover:border-opacity-70 cursor-pointer`}
+                      onClick={() => setSelectedItem({ type: 'urgent', data: item })}
+                      className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all hover:border-opacity-70 cursor-pointer active:scale-[0.98]`}
                     >
                       <div className="flex items-start gap-2">
                         <span className="text-lg">{getCategoryIcon(item.category)}</span>
@@ -325,11 +349,13 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {emails.map((email) => (
-                  <div
+                  <motion.div
                     key={email.id}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer hover:border-gray-400/40 dark:hover:border-white/30 ${email.unread
+                    onClick={() => setSelectedItem({ type: 'email', data: email })}
+                    whileHover={{ scale: 1.01, x: 2 }}
+                    className={`p-3 rounded-xl border transition-all cursor-pointer hover:border-gray-400/40 dark:hover:border-white/30 active:scale-[0.98] ${email.unread
                       ? "bg-blue-500/10 border-blue-400/30"
                       : "bg-gray-100/50 dark:bg-white/5 border-gray-300/50 dark:border-white/10"
                       }`}
@@ -337,35 +363,35 @@ export default function DashboardPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-2 flex-1">
                         <div className={`w-2 h-2 rounded-full ${getUrgencyDot(email.urgency)}`} />
-                        <span className="font-medium text-sm">{email.sender}</span>
+                        <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{email.sender}</span>
                         <span className="text-base">{getCategoryIcon(email.category)}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-gray-200/80 dark:bg-white/20 text-gray-700 dark:text-gray-200 border border-gray-300/50 dark:border-white/20">Acc {email.account}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{email.time}</span>
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-gray-200/80 dark:bg-white/20 text-gray-700 dark:text-gray-200 border border-gray-300/50 dark:border-white/20">Acc {email.account}</span>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{email.time}</span>
                       </div>
                     </div>
 
-                    <p className="text-sm font-medium mb-1">
+                    <p className="text-sm font-bold mb-1 text-gray-900 dark:text-white">
                       {email.subject}
                     </p>
 
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-xs text-gray-700 dark:text-gray-400 mb-2 line-clamp-1">
                       {email.aiSummary}
                     </p>
 
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-1 text-xs text-blue-300">
+                      <div className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
                         <ArrowRight className="w-3 h-3" />
                         <span>{email.suggestedAction}</span>
                       </div>
                       {email.estimatedValue && (
-                        <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-green-100/80 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300/60 dark:border-green-400/30">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-green-100/80 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300/60 dark:border-green-400/30">
                           ~€{email.estimatedValue.toLocaleString()}
                         </span>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -391,7 +417,7 @@ export default function DashboardPage() {
                 {tasks.map((task, index) => (
                   <motion.div
                     key={task.id}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors cursor-pointer group"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + index * 0.05, ease: EASE.out }}
@@ -401,6 +427,7 @@ export default function DashboardPage() {
                       whileTap={{ scale: 0.8 }}
                       animate={task.completed ? { scale: [1, 1.2, 1] } : {}}
                       transition={{ duration: 0.2, ease: EASE.spring }}
+                      className="flex items-center"
                     >
                       <input
                         type="checkbox"
@@ -411,19 +438,29 @@ export default function DashboardPage() {
                     </motion.div>
                     <motion.span
                       animate={task.completed ? { opacity: 0.5, x: 5 } : { opacity: 1, x: 0 }}
-                      className={task.completed ? "line-through text-gray-400 dark:text-gray-500" : ""}
+                      className={`text-sm font-semibold flex-1 ${task.completed ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-900 dark:text-gray-100"}`}
                     >
                       {task.title}
                     </motion.span>
-                    {task.priority === 1 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="ml-auto px-2 py-0.5 rounded-md text-xs font-medium bg-red-100/80 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300/60 dark:border-red-400/30"
+                    <div className="flex items-center gap-2">
+                      {task.priority === 1 && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-100/80 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-300/60 dark:border-red-400/30"
+                        >
+                          P1
+                        </motion.span>
+                      )}
+                      <a
+                        href={task.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="opacity-0 group-hover:opacity-100 glass-btn py-1 px-2 text-[10px] uppercase tracking-wider transition-all bg-white/50 dark:bg-white/10"
                       >
-                        P1
-                      </motion.span>
-                    )}
+                        Open
+                      </a>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -449,17 +486,23 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-3">
                 {news.map((item) => (
-                  <div
+                  <motion.div
                     key={item.id}
-                    className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-colors cursor-pointer bg-gray-100/50 dark:bg-white/5"
+                    onClick={() => setSelectedItem({ type: 'news', data: item })}
+                    whileHover={{ scale: 1.01, x: 2 }}
+                    className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all cursor-pointer bg-gray-100/30 dark:bg-white/5 group active:scale-[0.98]"
                   >
-                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-gray-200/80 dark:bg-white/20 text-gray-700 dark:text-gray-200 border border-gray-300/50 dark:border-white/20 mb-2 inline-block">{item.category}</span>
-                    <h3 className="font-semibold text-sm mb-2 line-clamp-2">{item.title}</h3>
-                    <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-                      <span>{item.source}</span>
-                      <span>{item.time}</span>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-400/20">
+                        {item.category}
+                      </span>
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{item.time}</span>
                     </div>
-                  </div>
+                    <h3 className="font-bold text-sm mb-2 line-clamp-2 text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">{item.title}</h3>
+                    <div className="flex justify-between items-center text-[10px] font-semibold text-gray-600 dark:text-gray-400">
+                      <span>{item.source}</span>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -507,18 +550,21 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-3">
               {events.map((event) => (
-                <div
+                <a
                   key={event.id}
-                  className="flex gap-3 p-3 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-colors bg-gray-100/50 dark:bg-white/5"
+                  href={event.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex gap-3 p-3 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all bg-gray-100/50 dark:bg-white/5 group active:scale-[0.98]"
                 >
-                  <div className="text-sm font-medium text-gray-600 dark:text-gray-400 w-28">{event.time}</div>
+                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 w-28 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{event.time}</div>
                   <div className="flex-1">
-                    <p className="font-medium text-sm">{event.title}</p>
+                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">{event.title}</p>
                     <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300/60 dark:border-blue-400/30">
                       {event.status}
                     </span>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </motion.div>
@@ -668,6 +714,129 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </div>
+      {/* Detail Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedItem(null)}
+            className="absolute inset-0 bg-black/40 backdrop-blur-md"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="relative w-full max-w-lg glass-panel p-8 shadow-2xl"
+          >
+            <button
+              onClick={() => setSelectedItem(null)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            >
+              <Minimize2 className="w-4 h-4" />
+            </button>
+
+            {selectedItem.type === 'email' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="glass-icon-container">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">{selectedItem.data.sender}</h2>
+                    <p className="text-sm text-gray-500">{selectedItem.data.subject}</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed whitespace-pre-line">
+                  {selectedItem.data.fullContent}
+                </div>
+                <div className="flex justify-end pt-4">
+                  <a
+                    href={selectedItem.data.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass-btn flex items-center gap-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                  >
+                    Open in Gmail <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {selectedItem.type === 'news' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="glass-icon-container">
+                    <Newspaper className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">{selectedItem.data.title}</h2>
+                    <p className="text-sm text-gray-500">{selectedItem.data.source} • {selectedItem.data.time}</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed">
+                  <h3 className="font-semibold mb-2 text-blue-500">Perplexity Samenvatting</h3>
+                  {selectedItem.data.summary}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Bronnen</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedItem.data.sources.map((src: string, i: number) => (
+                      <a
+                        key={i}
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-500 hover:underline bg-blue-500/5 px-2 py-1 rounded"
+                      >
+                        Source {i + 1}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-end pt-4">
+                  <a
+                    href={selectedItem.data.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass-btn flex items-center gap-2"
+                  >
+                    Bekijk op Perplexity <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {selectedItem.type === 'urgent' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="glass-icon-container">
+                    <AlertCircle className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Urgente Actie Vereist</h2>
+                    <p className="text-sm text-red-500 font-medium">{selectedItem.data.urgency.toUpperCase()}</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10 text-sm leading-relaxed">
+                  <p className="font-semibold mb-1">{selectedItem.data.summary}</p>
+                  <p className="text-gray-600 dark:text-gray-400">Deze taak heeft direct aandacht nodig.</p>
+                </div>
+                <div className="flex justify-end pt-4">
+                  <a
+                    href={selectedItem.data.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass-btn flex items-center gap-2 bg-red-500 text-white border-none hover:bg-red-600"
+                  >
+                    Actie ondernemen <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
