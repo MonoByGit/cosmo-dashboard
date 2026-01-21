@@ -178,11 +178,12 @@ export default function DashboardPage() {
   };
 
   const getUrgencyColor = (urgency: string) => {
-    // Apple-style: subtle backgrounds with high text contrast
+    // iOS 26 High-End mapping: Soft but definitive
     const map: Record<string, string> = {
-      'high': 'bg-red-50 dark:bg-red-500/10 border-red-200/60 dark:border-red-400/30',
-      'medium': 'bg-orange-50 dark:bg-orange-500/10 border-orange-200/60 dark:border-orange-400/30',
-      'low': 'bg-blue-50 dark:bg-blue-500/10 border-blue-200/60 dark:border-blue-400/30'
+      'high': 'bg-red-50/80 dark:bg-red-500/10 border-red-200/60 dark:border-red-400/20',
+      'medium': 'bg-amber-50/80 dark:bg-amber-500/10 border-amber-200/60 dark:border-amber-400/20',
+      'normal': 'bg-indigo-50/80 dark:bg-indigo-500/10 border-indigo-200/60 dark:border-indigo-400/20',
+      'low': 'bg-emerald-50/80 dark:bg-emerald-500/10 border-emerald-200/60 dark:border-emerald-400/20'
     };
     return map[urgency] || 'bg-gray-50/80 dark:bg-white/5 border-gray-200/60 dark:border-white/10';
   };
@@ -271,21 +272,28 @@ export default function DashboardPage() {
                       onClick={() => setSelectedItem({ type: 'urgent', data: item })}
                       className={`p-3 rounded-xl border ${getUrgencyColor(item.urgency)} transition-all hover:border-opacity-70 cursor-pointer active:scale-[0.98]`}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg bg-white/20 dark:bg-white/10 ${item.urgency === 'high' ? 'text-red-500' : item.urgency === 'medium' ? 'text-orange-500' : 'text-blue-500'}`}>
-                          {getCategoryIcon(item.category)}
+                      <div className="flex items-start gap-4">
+                        <div className={`p-2 rounded-xl flex items-center justify-center bg-white/40 dark:bg-white/10 ${item.urgency === 'high' ? 'text-red-500' :
+                            item.urgency === 'medium' ? 'text-amber-500' :
+                              item.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
+                          }`}>
+                          {item.urgency === 'high' ? <AlertTriangle className="w-5 h-5" /> :
+                            item.urgency === 'medium' ? <AlertCircle className="w-5 h-5" /> :
+                              item.urgency === 'normal' ? <Mail className="w-5 h-5" /> : <Package className="w-5 h-5" />}
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold mb-1 text-gray-900 dark:text-white">{item.summary}</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-300">
+                          <p className="text-sm font-medium mb-1 text-gray-900 dark:text-white leading-tight">{item.summary}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             → {item.suggestedAction}
                           </p>
                         </div>
-                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${item.urgency === 'high'
-                          ? 'bg-red-100/80 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200'
-                          : item.urgency === 'medium'
-                            ? 'bg-orange-100/80 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-200'
-                            : 'bg-blue-100/80 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200'
+                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border ${item.urgency === 'high'
+                            ? 'bg-red-100/60 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200/60'
+                            : item.urgency === 'medium'
+                              ? 'bg-amber-100/60 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200/60'
+                              : item.urgency === 'normal'
+                                ? 'bg-indigo-100/60 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200/60'
+                                : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
                           }`}>
                           {item.urgency}
                         </span>
@@ -500,13 +508,13 @@ export default function DashboardPage() {
                     whileHover={{ scale: 1.01, x: 2 }}
                     className="p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all cursor-pointer bg-gray-100/30 dark:bg-white/5 group active:scale-[0.98]"
                   >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">
                         {item.category}
                       </span>
-                      <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{item.time}</span>
+                      <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{item.time}</span>
                     </div>
-                    <h3 className="font-bold text-sm mb-2 line-clamp-2 text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">{item.title}</h3>
+                    <h3 className="font-semibold text-sm mb-1 line-clamp-2 text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight leading-snug">{item.title}</h3>
                     <div className="flex justify-between items-center text-[10px] font-semibold text-gray-600 dark:text-gray-400">
                       <span>{item.source}</span>
                     </div>
@@ -537,14 +545,11 @@ export default function DashboardPage() {
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20" />
               </div>
 
-              <div className="relative z-10 max-w-md">
-                <div className="glass-icon-container mb-6 mx-auto bg-white/50 dark:bg-black/50 backdrop-blur-md">
-                  <Sparkles className="w-6 h-6 text-blue-500" />
-                </div>
-                <blockquote className="text-xl font-bold italic mb-4 text-gray-900 dark:text-white leading-tight drop-shadow-sm">
+              <div className="relative z-10 max-w-sm px-4">
+                <blockquote className="text-lg font-medium italic mb-2 text-gray-900 dark:text-white leading-relaxed drop-shadow-sm">
                   "De beste tijd om een boom te planten was 20 jaar geleden. De op één na beste tijd is nu."
                 </blockquote>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-300 drop-shadow-sm">— Chinees spreekwoord</p>
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-400 tracking-wide">— Chinees spreekwoord</p>
               </div>
             </motion.div>
           </div>
@@ -573,17 +578,17 @@ export default function DashboardPage() {
                   href={event.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex gap-3 p-4 rounded-xl border border-gray-300/50 dark:border-white/10 hover:border-gray-400/60 dark:hover:border-white/20 transition-all bg-gray-100/50 dark:bg-white/5 group active:scale-[0.98]"
+                  className="flex gap-4 p-4 rounded-xl border border-gray-200/60 dark:border-white/5 hover:border-gray-300/80 dark:hover:border-white/10 transition-all bg-white/40 dark:bg-white/5 group active:scale-[0.98]"
                 >
-                  <div className="text-sm font-bold text-gray-900 dark:text-gray-100 w-28 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 w-24 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {event.time}
                   </div>
                   <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{event.title}</p>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${event.status === 'aankomend'
-                        ? 'bg-purple-100/80 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200/50'
-                        : 'bg-emerald-100/80 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/50'
+                    <div className="flex justify-between items-center">
+                      <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors">{event.title}</p>
+                      <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border ${event.status === 'aankomend'
+                          ? 'bg-purple-100/60 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200/60'
+                          : 'bg-emerald-100/60 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/60'
                         }`}>
                         {event.status}
                       </span>
@@ -596,7 +601,7 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* RIGHT COLUMN: Chat Sidebar (1/3 width on desktop, overlay on mobile) */}
-        <div className={`lg:col-span-1 ${isChatOpen ? 'fixed inset-0 z-50 lg:relative' : 'hidden lg:block'}`}>
+        <div className={`lg:col-span-1 ${isChatOpen ? 'fixed inset-0 z-50 lg:relative' : 'hidden lg:block self-stretch'}`}>
           {/* Mobile backdrop */}
           {isChatOpen && (
             <div
@@ -607,7 +612,7 @@ export default function DashboardPage() {
 
           {/* Chat container */}
           <motion.div
-            className={`glass-panel p-6 flex flex-col ${isChatOpen ? 'fixed inset-0 z-[100] rounded-none bg-white/95 dark:bg-gray-900/95 lg:h-[calc(100vh-8rem)] lg:w-auto lg:relative lg:inset-auto lg:z-auto lg:rounded-2xl lg:bg-transparent lg:sticky lg:top-8' : 'h-[calc(100vh-8rem)] lg:sticky lg:top-8'}`}
+            className={`glass-panel p-6 flex flex-col ${isChatOpen ? 'fixed inset-0 z-[100] rounded-none bg-white/95 dark:bg-gray-900/95' : 'h-full'}`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: DURATION.normal / 1000, delay: 0.58, ease: EASE.spring }}
@@ -835,17 +840,28 @@ export default function DashboardPage() {
             {selectedItem.type === 'urgent' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className={`p-3 rounded-xl bg-opacity-20 flex items-center justify-center ${selectedItem.data.urgency === 'high' ? 'bg-red-500' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500' : 'bg-blue-500'}`}>
-                    {selectedItem.data.urgency === 'high' ? <AlertTriangle className="w-6 h-6 text-red-500" /> : selectedItem.data.urgency === 'medium' ? <HelpCircle className="w-6 h-6 text-orange-500" /> : <AlertCircle className="w-6 h-6 text-blue-500" />}
+                  <div className={`p-3 rounded-xl bg-opacity-10 flex items-center justify-center ${selectedItem.data.urgency === 'high' ? 'bg-red-500 text-red-500' :
+                    selectedItem.data.urgency === 'medium' ? 'bg-amber-500 text-amber-500' :
+                      selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 text-indigo-500' : 'bg-emerald-500 text-emerald-500'
+                    }`}>
+                    {selectedItem.data.urgency === 'high' ? <AlertTriangle className="w-6 h-6" /> :
+                      selectedItem.data.urgency === 'medium' ? <AlertCircle className="w-6 h-6" /> :
+                        selectedItem.data.urgency === 'normal' ? <Mail className="w-6 h-6" /> : <Package className="w-6 h-6" />}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Urgente Actie Vereist</h2>
-                    <p className={`text-sm font-bold uppercase tracking-wider ${selectedItem.data.urgency === 'high' ? 'text-red-500' : selectedItem.data.urgency === 'medium' ? 'text-orange-500' : 'text-blue-500'}`}>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedItem.data.urgency === 'high' ? 'text-red-500' :
+                      selectedItem.data.urgency === 'medium' ? 'text-amber-500' :
+                        selectedItem.data.urgency === 'normal' ? 'text-indigo-500' : 'text-emerald-500'
+                      }`}>
                       {selectedItem.data.urgency}
                     </p>
                   </div>
                 </div>
-                <div className={`p-6 rounded-2xl border text-sm leading-relaxed ${selectedItem.data.urgency === 'high' ? 'bg-red-500/5 border-red-500/10' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500/5 border-orange-500/10' : 'bg-blue-500/5 border-blue-500/10'}`}>
+                <div className={`p-6 rounded-2xl border text-sm leading-relaxed ${selectedItem.data.urgency === 'high' ? 'bg-red-500/5 border-red-500/10' :
+                  selectedItem.data.urgency === 'medium' ? 'bg-amber-500/5 border-amber-500/10' :
+                    selectedItem.data.urgency === 'normal' ? 'bg-indigo-500/5 border-indigo-500/10' : 'bg-emerald-500/5 border-emerald-500/10'
+                  }`}>
                   <p className="font-bold text-lg mb-2 text-gray-900 dark:text-white leading-tight">{selectedItem.data.summary}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-base font-medium">Deze taak heeft direct aandacht nodig en vereist jouw expertise.</p>
                 </div>
@@ -854,7 +870,10 @@ export default function DashboardPage() {
                     href={selectedItem.data.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`glass-btn flex items-center gap-2 text-white border-none transition-all shadow-lg font-bold px-6 py-3 ${selectedItem.data.urgency === 'high' ? 'bg-red-500 hover:bg-red-600' : selectedItem.data.urgency === 'medium' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-500 hover:bg-blue-600'}`}
+                    className={`glass-btn flex items-center gap-2 text-white border-none transition-all shadow-lg font-bold px-6 py-3 ${selectedItem.data.urgency === 'high' ? 'bg-red-500 hover:bg-red-600' :
+                      selectedItem.data.urgency === 'medium' ? 'bg-amber-500 hover:bg-amber-600' :
+                        selectedItem.data.urgency === 'normal' ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-emerald-500 hover:bg-emerald-600'
+                      }`}
                   >
                     Actie ondernemen <ArrowRight className="w-4 h-4" />
                   </a>
